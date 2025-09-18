@@ -72,8 +72,3 @@ def brain_login(credential_path=None):
     except requests.exceptions.RequestException as e:
         print(f"An error occurred during the authentication request: {e}")
         return None
-    
-
-if __name__ == "__main__":
-    # Example usage
-    session = brain_login()
