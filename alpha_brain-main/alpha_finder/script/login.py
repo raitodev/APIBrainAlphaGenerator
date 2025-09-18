@@ -65,9 +65,12 @@ def brain_login(credential_path=None):
                 print("Complete biometrics authentication: " + urljoin(response.url, response.headers["Location"]))
                 input("After completing biometrics authentication and press any key to continue ...")
                 s.post(urljoin(response.url, response.headers["Location"]))
+                # The 's' session object is now authenticated and ready for use.
+                print("Authentication successful!")
+                return s
             else:
                 print(f"Response: {e.response.text}")
-        return None
+                return None
     
     except requests.exceptions.RequestException as e:
         print(f"An error occurred during the authentication request: {e}")
