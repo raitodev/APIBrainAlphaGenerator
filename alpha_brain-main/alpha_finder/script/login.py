@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+from urllib.parse import urljoin
 
 def brain_login(credential_path=None):
     """
@@ -56,8 +57,21 @@ def brain_login(credential_path=None):
 
     except requests.exceptions.HTTPError as e:
         print(f"Authentication failed. Status code: {e.response.status_code}")
-        print(f"Response: {e.response.text}")
-        return None
+
+        # Check status code for next action
+        if response.status_code == requests.status_codes.codes.unauthorized:
+            if response.headers["WWW-Authenticate"] == "persona":
+                # Outputs the URL to access through the browser to complete biometrics authentication
+                print("Complete biometrics authentication: " + urljoin(response.url, response.headers["Location"]))
+                input("After completing biometrics authentication and press any key to continue ...")
+                s.post(urljoin(response.url, response.headers["Location"]))
+                # The 's' session object is now authenticated and ready for use.
+                print("Authentication successful!")
+                return s
+            else:
+                print(f"Response: {e.response.text}")
+                return None
+    
     except requests.exceptions.RequestException as e:
         print(f"An error occurred during the authentication request: {e}")
         return None
